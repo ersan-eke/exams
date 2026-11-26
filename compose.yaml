@@ -1,0 +1,20 @@
+# Local dev services. Start with: docker compose up -d db
+services:
+  db:
+    image: pgvector/pgvector:pg18
+    environment:
+      POSTGRES_USER: examsim
+      POSTGRES_PASSWORD: examsim  # dev only; matches the default DATABASE_URL in backend/app/core/config.py
+      POSTGRES_DB: examsim
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql  # postgres 18+ keeps its data in a versioned subdir here
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "examsim"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db-data:

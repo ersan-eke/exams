@@ -1,0 +1,102 @@
+name: CI/CD - Vue.js App to GHCR
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build-test-deploy:
+    name: Build, Test & Deploy Frontend
+    runs-on: ubuntu-latest
+    permissions: 
+      contents: read
+      packages: write
+
+    steps:
+      # 1. Checkout the codebase
+      - name: Checkout Code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      # 2. Set up Docker Buildx
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      # 3. Log in to GHCR
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # 4. Cache Docker layers
+      - name: Cache Docker Layers
+        uses: actions/cache@v4
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      # 5. Cache npm dependencies
+      - name: Cache npm Dependencies
+        uses: actions/cache@v5
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
+
+      # 6. Generate build metadata for GHCR
+      - name: Generate Build Metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}/frontend
+          tags: |
+            type=raw,value=latest
+            type=sha,format=short
+
+      # 7. Build Docker image for testing
+      - name: Build Dev Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile.dev
+          tags: frontend-dev:test
+          load: true
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache,mode=max
+
+      # 8. Run unit tests inside container
+      - name: Run Vue.js Tests
+        run: |
+          docker run --rm \
+            --workdir /app \
+            frontend-dev:test \
+            npx vitest run
+        env:
+          CI: true
+          NODE_ENV: test
+        timeout-minutes: 10
+
+      # 9. Build and push production image to GHCR
+      - name: Build and Push Production Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=local,src=/tmp/.buildx-cache

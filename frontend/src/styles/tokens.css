@@ -1,0 +1,74 @@
+:root {
+  --ink: #1c1c1c;
+  --mute: #8a8a85;
+  --line: #e8e7e3;
+  --paper: #fbfbf9;
+  --soft: #f4f3ef;
+  --over: #9a6a3a;
+  --good: #2e7d32;
+  --bad: #c62828;
+  --white: #fff;
+  --drop-line: #cfcec8;
+
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 18px;
+  --s5: 28px;
+  --s6: 48px;
+
+  --font: 'Inter', -apple-system, 'Helvetica Neue', sans-serif;
+  --fs-sm: 11px;
+  --fs: 13px;
+  --fs-lg: 15px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: var(--fs);
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+.label {
+  font-size: var(--fs-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--mute);
+}

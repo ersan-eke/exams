@@ -1,0 +1,31 @@
+# Slack app manifest. Replace <tunnel> with your public https host (see docs/slack.md).
+display_information:
+  name: exam-sim
+features:
+  bot_user:
+    display_name: exam-sim
+    always_online: false
+  slash_commands:
+    - command: /quiz
+      url: https://<tunnel>/api/webhooks/slack/commands
+      description: Quiz me on a subject
+      usage_hint: <subject>
+oauth_config:
+  redirect_urls:
+    - https://<tunnel>/api/integrations/slack/callback
+  scopes:
+    bot:
+      - commands
+      - chat:write
+settings:
+  event_subscriptions:
+    request_url: https://<tunnel>/api/webhooks/slack/events
+    bot_events:
+      - app_uninstalled
+      - tokens_revoked
+  interactivity:
+    is_enabled: true
+    request_url: https://<tunnel>/api/webhooks/slack/interactions
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false

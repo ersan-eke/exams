@@ -1,0 +1,108 @@
+# Production on the home VM: docker compose -f compose.prod.yaml up -d --build (secrets in deploy/.env, see .env.example).
+# Stage 1 builds the images on the VM from this checkout. Stage 2 switches `build:` to GHCR `image:` tags and adds the
+# update timer.
+# shortcut: the pull deploy can later become a push deploy (self-hosted GitHub Actions runner, GitLab CI or similar)
+# when deploy feedback in CI matters more than a closed home network.
+# No service publishes a port: cloudflared is the only way in, and it only dials out.
+
+# shortcut: only the worker has CPU/memory limits and no service runs read_only; add limits to api/web/db and
+# read_only + a tmpfs /tmp where the images allow it, in stage 2.
+x-hardening: &hardening
+  restart: unless-stopped
+  security_opt: [no-new-privileges:true]
+  cap_drop: [ALL]
+
+x-backend-env: &backend-env
+  DATABASE_URL: postgresql+psycopg://examsim:${POSTGRES_PASSWORD:?}@db:5432/examsim
+  STORAGE_DIR: /data/storage
+  # the image's user has no home; model downloads (fastembed, Hugging Face, docling) persist on the storage mount
+  XDG_CACHE_HOME: /data/storage/cache
+  FASTEMBED_CACHE_PATH: /data/storage/cache/fastembed
+  SECRET_KEY: ${SECRET_KEY:?}
+  INTEGRATIONS_KEY: ${INTEGRATIONS_KEY:?}
+  ALLOWED_EMAILS: ${ALLOWED_EMAILS:?}
+  GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+  GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+  GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+  GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+  SLACK_CLIENT_ID: ${SLACK_CLIENT_ID:-}
+  SLACK_CLIENT_SECRET: ${SLACK_CLIENT_SECRET:-}
+  SLACK_SIGNING_SECRET: ${SLACK_SIGNING_SECRET:-}
+  NOTION_CLIENT_ID: ${NOTION_CLIENT_ID:-}
+  NOTION_CLIENT_SECRET: ${NOTION_CLIENT_SECRET:-}
+
+x-backend: &backend
+  <<: *hardening
+  build: ../backend
+  image: exam-sim-backend
+  environment: *backend-env
+  volumes:
+    - /srv/exam-sim/storage:/data/storage  # must be owned by uid 10001 (the image's `app` user)
+
+services:
+  db:
+    <<: *hardening
+    image: pgvector/pgvector:pg18
+    # the smallest set that inits and restarts: the entrypoint chowns the data dir (CHOWN), reads it as root on later
+    # starts (DAC_OVERRIDE) and drops to the postgres user with gosu (SETUID, SETGID); FOWNER is not needed
+    cap_add: [CHOWN, SETUID, SETGID, DAC_OVERRIDE]
+    environment:
+      POSTGRES_USER: examsim
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?}
+      POSTGRES_DB: examsim
+    volumes:
+      - /srv/exam-sim/pgdata:/var/lib/postgresql  # postgres 18+ keeps its data in a versioned subdir here
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "examsim"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks: [backend]
+
+  migrate:
+    <<: *backend
+    command: alembic upgrade head
+    restart: "no"
+    volumes: []
+    depends_on:
+      db: {condition: service_healthy}
+    networks: [backend]
+
+  api:
+    <<: *backend
+    # --forwarded-allow-ips "*" is safe: no port is published and cloudflared sits on `tunnel` only, so client traffic
+    # reaches the api through nginx, which overwrites X-Forwarded-For with CF-Connecting-IP
+    # --no-access-log: query strings carry OAuth codes and Slack crop tokens (matches nginx `access_log off`)
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --proxy-headers --forwarded-allow-ips "*" --no-access-log
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    networks: [backend, edge]
+
+  worker:
+    <<: *backend
+    command: python -m app.worker.main
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    networks: [backend, edge]  # edge: LLM providers, Slack, Notion
+    mem_limit: 4g
+    cpus: 2
+
+  web:
+    <<: *hardening
+    build: ../frontend
+    depends_on: [api]
+    networks: [tunnel, edge]
+
+  cloudflared:
+    <<: *hardening
+    image: cloudflare/cloudflared:2026.11.2
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${TUNNEL_TOKEN:?}
+    networks: [tunnel]  # reaches web only, never the api directly
+
+networks:
+  backend:
+    internal: true  # db has no route to the internet
+  edge: {}
+  tunnel: {}  # cloudflared ↔ web; has internet so cloudflared can dial out

@@ -1,0 +1,13 @@
+[
+  {"question": "wie ist ein ip4 address aufgebaut?", "expect": ["3-21"], "note": "IPv4 header; second tester question, answer was off"},
+  {"question": "aus was besteht N-IDU", "expect": ["0-40"]},
+  {"question": "wie berechne ich entropie aus?", "expect": ["1-6"]},
+  {"question": "wie rechne ich SNR um?", "expect": ["1-35"]},
+  {"question": "wie bestimme ich kollisionsdomänen?", "expect": ["2-72", "2-76"]},
+  {"question": "was ist in dem source address von ipv4?", "expect": ["3-21"]},
+  {"question": "wie funktioniert DHCP?", "expect": ["3-35"]},
+  {"question": "wie verhindere ich Count-to-infinity?", "expect": ["3-78"]},
+  {"question": "wie funktioniert sliding window verfahren?", "expect": ["4-19"]},
+  {"question": "was ist der zusammenhang zwischen nat und icmp?", "expect": ["4-44"]},
+  {"question": "wie baue ich den Huffman-Code Baum auf?", "expect": ["5-30"]}
+]

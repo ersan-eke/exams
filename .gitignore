@@ -1,0 +1,51 @@
+# Exam material - never commit (copyright)
+/samples/
+/debug/
+/results/
+/output/
+/retake_2024.*
+*.pdf
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*_env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+
+# OS / editor
+.DS_Store
+.idea/
+.claude/settings.local.json
+
+# Brainstorm mockups
+.superpowers/
+
+# Uploads and rendered crops (backend/app/core/config.py STORAGE_DIR)
+/backend/storage/
+
+# Local editor MCP config
+.mcp.json
+/backend/evals/grading/cases.jsonl
+
+# Production secrets on the VM
+deploy/.env
+
+# Claude Code local state and graphify working files (graph.json, GRAPH_REPORT.md, manifest.json stay tracked)
+.claude/worktrees/
+.claude/*.graphify-bak
+graphify-out/cache/
+graphify-out/20*/
+graphify-out/.*
+graphify-out/graph.html
