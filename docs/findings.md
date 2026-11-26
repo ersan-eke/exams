@@ -194,3 +194,31 @@ Collected 2026-11-15 from earlier sessions, handoff docs, issues and `shortcut:`
 - **Hardening narrower than spec layer 4** (`deploy/compose.prod.yaml`, `shortcut:` comment): only the worker has CPU/memory limits; no `read_only` root filesystems. *Fix when:* stage 2.
 - **Two `test_sync.py` tests flake on a host clock jump** (seen during the 6a-1 fix wave, machine suspend): they compare the wall clock to the DB's `now()`. Passed on rerun. *Fix when:* it recurs; note the test names.
 - **Data move copies `storage/cache/`** (`docs/hosting.md` step 6): model downloads travel along. Harmless, only size.
+
+### Grading eval on real exams (branch grading-eval-real-exams, Task 7)
+- **Manual .md drops blank lines inside an answer** (`evals/grading/manual_cases.py` `parse_manual`): an empty line between paragraphs vanishes, a whitespace-only indented line is kept. *Left because:* transcriptions use no blank lines. *Fix when:* a transcription needs paragraphs.
+- **Sum check runs after `render_variants`** (`manual_cases.py` `_load`): an excluded exam still renders its crops first. *Left because:* 5 exams, seconds. *Fix when:* more exams.
+- **Unmatched / no-solution / no-cover paths not asserted** (`tests/test_eval_scans.py`): only checked by absence. *Fix when:* touching the loader.
+- **Duplicate entry ids give duplicate case ids** (`manual_cases.py`): a copy-paste slip in a .md produces two cases with one id. *Fix when:* it bites; reject duplicates in `parse_manual`.
+- **CLI default folder is relative** (`manual_cases.py` `main`): works only when run from `backend/`, like `import_scans`. *Fix when:* run from elsewhere.
+
+### Grading eval on real exams (branch grading-eval-real-exams)
+- **Two scores on one baseline in x<70 concatenate** (`evals/grading/scan_points.py` `read_scores`): not seen in data; fails safe via the sum check. *Fix when:* an exam drops out for it.
+- **`pdf.pages[0]` IndexError on an empty PDF** (`scan_points.py` `read_cover_total`): a traceback on a corrupt scan. *Fix when:* scans come from elsewhere.
+- **Sigma PDF wrapper path untested** (`tests/test_eval_scans.py`): `test_read_cover_total_no_sigma` covers the wrapper only. *Fix when:* touching `read_cover_total`.
+- **`c["text"] in "0123456789,."` is a substring check** (`scan_points.py:32`): empty text passes, but cannot form a `_SCORE` fullmatch. *Fix when:* touching `read_scores`; use a set.
+- **Watermark digits on a score line would still merge** (`scan_points.py`): fails safe via the sum check. *Fix when:* seen in data.
+- **A per-exam exception aborts the whole import run** (`evals/grading/import_scans.py` `main`). *Fix when:* more than a handful of exams; catch per exam and mark "error".
+- **`match` runs twice per exam; `render_page` reopens the `PdfDocument` per page** (`import_scans.py`): speed only. *Fix when:* import time matters.
+- **Excluded rows in coverage.md show 0, not '-'** (`import_scans.py` `main`): cosmetic. *Fix when:* touching the table.
+- **"unmatched" counts subtasks with points None/0 and dropped cases** (`import_scans.py` `_import_one`): handoff wording fixed, the number still mixes causes. *Fix when:* the split matters.
+- **One solution can pair two scans** (`import_scans.py` `find_pairs`): not in the real data; coverage.md shows the pairing. *Fix when:* it shows twice.
+- **Test doesn't assert skipped cases count as unmatched** (`tests/test_eval_scans.py` `test_build_cases_skips_points_above_max_and_question_line_only`). *Fix when:* touching `build_cases`.
+- **45pt region minimum is a magic number** (`import_scans.py` `build_cases`, has a `shortcut:` comment). *Fix when:* a real question is under 45pt.
+- **The "2px" test pixel sits 1px from the edge** (`tests/test_eval_scans.py` clip test): naming only. *Fix when:* touching it.
+- **Crop page size comes from the scan render, not `exam.page_sizes`** (`import_scans.py:102`): right only while scan and solution pages are the same size (A4). *Fix when:* a non-A4 scan.
+- **`--limit 0` or negative is not rejected** (`evals/grading/run_eval.py:58`): `[:0]` grades nothing, `-1` drops the last case. *Left because:* dev-only CLI. *Fix when:* someone mistypes it.
+- **New report columns untested** (`tests/test_eval.py`): `within_half`/`within_one` are tested in `metrics`, not in the written table. *Fix when:* touching the report.
+- **A bbox past the image edge pads black** (`evals/grading/scan_crop.py:16` `clean_crop`): PIL fills outside pixels with black, which reads as ink. *Left because:* regions come from the same-size solution page. *Fix when:* page sizes differ (see above).
+- **`convert("RGB")` drops alpha without a white background** (`scan_crop.py:16`): a transparent scan turns black. *Left because:* scans are opaque. *Fix when:* a PNG-with-alpha source appears.
+- **Any non-solution PDF in the folder counts as a scan** (`import_scans.py` `find_pairs`): a stray PDF shows up as an unpaired row. *Left because:* coverage.md shows it. *Fix when:* the folder holds other PDFs.

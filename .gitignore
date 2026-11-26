@@ -49,3 +49,4 @@ graphify-out/cache/
 graphify-out/20*/
 graphify-out/.*
 graphify-out/graph.html
+/backend/evals/grading/private/

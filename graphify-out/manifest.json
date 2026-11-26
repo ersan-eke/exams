@@ -6,9 +6,9 @@
     "semantic_hash": "f5d7b055b3a1e93a2a6ad845a0af099e"
   },
   ".claude/settings.json": {
-    "mtime": 1795084558.7183182,
-    "seen": 1795618824.357814,
-    "ast_hash": "81b72468e847eeb74d057926ce736ee5",
+    "mtime": 1795684098.1432395,
+    "seen": 1795704226.628672,
+    "ast_hash": "e3e2399218458ad3e429c8dbcdb24341",
     "semantic_hash": ""
   },
   ".github/workflows/frontend.yml": {
@@ -420,10 +420,10 @@
     "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
   },
   "backend/evals/grading/run_eval.py": {
-    "mtime": 1793367443.2023525,
-    "seen": 1795618824.3579159,
-    "ast_hash": "f0a1005481a3ef1072439cf63d492cc8",
-    "semantic_hash": "f0a1005481a3ef1072439cf63d492cc8"
+    "mtime": 1795714520.3741848,
+    "seen": 1795714526.7894669,
+    "ast_hash": "2e2f99d76cfcede740786527a86d2ac8",
+    "semantic_hash": ""
   },
   "backend/evals/rag/__init__.py": {
     "mtime": 1794588730.8026762,
@@ -530,10 +530,10 @@
     "semantic_hash": "b5349b24b065aab18c6d2e0996ab5f05"
   },
   "backend/tests/test_eval.py": {
-    "mtime": 1793735303.2206275,
-    "seen": 1795618824.35794,
-    "ast_hash": "6fb5e4f42389123d497955c976ebf395",
-    "semantic_hash": "6fb5e4f42389123d497955c976ebf395"
+    "mtime": 1795714520.3752131,
+    "seen": 1795714526.7894971,
+    "ast_hash": "1e4d79b1956ebfaebc7351f3eedda5c1",
+    "semantic_hash": ""
   },
   "backend/tests/test_grading.py": {
     "mtime": 1793735303.2206635,
@@ -1492,10 +1492,10 @@
     "semantic_hash": "ac8ee49ea747a4400fe775ee70494b19"
   },
   "backend/evals/grading/README.md": {
-    "mtime": 1793367443.2021296,
-    "seen": 1795618824.3581529,
-    "ast_hash": "5d71035daa77fc79dbdebb24377770e6",
-    "semantic_hash": "5d71035daa77fc79dbdebb24377770e6"
+    "mtime": 1795714520.3723314,
+    "seen": 1795714526.7897139,
+    "ast_hash": "b8038b1dcb6cff5955af98d9dbad413a",
+    "semantic_hash": ""
   },
   "docs/2026-10-28-backend-foundation-handoff.md": {
     "mtime": 1793196052.022233,
@@ -1564,9 +1564,9 @@
     "semantic_hash": "9918a4051db590bde5644c39db5194f4"
   },
   "docs/findings.md": {
-    "mtime": 1795667927.6449413,
-    "seen": 1795667932.232488,
-    "ast_hash": "d00e0a477f453ee2fb504e591459081c",
+    "mtime": 1795714520.376893,
+    "seen": 1795714526.7897432,
+    "ast_hash": "e1f0637e756b89e5a2f39970362b1de5",
     "semantic_hash": ""
   },
   "docs/mcp.md": {
@@ -2047,6 +2047,78 @@
     "mtime": 1795667927.6466274,
     "seen": 1795667939.271414,
     "ast_hash": "6d2101455ea09062087bd1191f6a179b",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1795684843.4115372,
+    "seen": 1795704226.629046,
+    "ast_hash": "890a9bf9bddb7448ab4185275d469493",
+    "semantic_hash": ""
+  },
+  "docs/project-report.md": {
+    "mtime": 1795683613.06973,
+    "seen": 1795704226.629081,
+    "ast_hash": "a463e3d809189df9f0bc391f5cbbaef0",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/plans/2026-11-26-grading-eval-real-exams.md": {
+    "mtime": 1795703844.534617,
+    "seen": 1795704226.6291032,
+    "ast_hash": "6370a4d904c932898ba84a84aebf45d4",
+    "semantic_hash": ""
+  },
+  "docs/superpowers/specs/2026-11-26-grading-eval-real-exams-design.md": {
+    "mtime": 1795703217.7223427,
+    "seen": 1795704226.62912,
+    "ast_hash": "a44ab4674933df377ad5766a43242002",
+    "semantic_hash": ""
+  },
+  "backend/evals/grading/scan_crop.py": {
+    "mtime": 1795714520.3745842,
+    "seen": 1795714526.7894678,
+    "ast_hash": "6f856d31431fc030f97da7b47a2e90bf",
+    "semantic_hash": ""
+  },
+  "backend/tests/test_eval_scans.py": {
+    "mtime": 1795714520.3757434,
+    "seen": 1795714526.789498,
+    "ast_hash": "5d7ac2812b6c1b13d086ecf1e873b717",
+    "semantic_hash": ""
+  },
+  "backend/evals/grading/scan_points.py": {
+    "mtime": 1795714520.3748777,
+    "seen": 1795714526.789469,
+    "ast_hash": "28f4cc2d43436fcdb50b6b0f652a591b",
+    "semantic_hash": ""
+  },
+  "backend/evals/grading/import_scans.py": {
+    "mtime": 1795714520.3726676,
+    "seen": 1795714526.789464,
+    "ast_hash": "2cc08b883c58b8027dcc760302807f0f",
+    "semantic_hash": ""
+  },
+  "backend/evals/grading/manual_cases.py": {
+    "mtime": 1795714520.3732126,
+    "seen": 1795714526.7894652,
+    "ast_hash": "f2f2ac38ec249aa5126bb5754c354bea",
+    "semantic_hash": ""
+  },
+  "backend/evals/grading/results/2026-11-27-anthropic-claude-haiku-5-5-transcribed.md": {
+    "mtime": 1795714520.3735976,
+    "seen": 1795714526.789715,
+    "ast_hash": "761b7ec9f47324a57e305170ca8f1e7c",
+    "semantic_hash": ""
+  },
+  "backend/evals/grading/results/2026-11-27-anthropic-claude-haiku-5-5.md": {
+    "mtime": 1795714520.3739524,
+    "seen": 1795714526.789716,
+    "ast_hash": "373377f4d9c7548493ba12b170a2b7ee",
+    "semantic_hash": ""
+  },
+  "docs/2026-11-26-grading-eval-handoff.md": {
+    "mtime": 1795714520.3762314,
+    "seen": 1795714526.7897348,
+    "ast_hash": "5605a6ce6805bfbf034d05584b04a363",
     "semantic_hash": ""
   },
   "frontend/package-lock.json": {

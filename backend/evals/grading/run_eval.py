@@ -13,6 +13,8 @@ from collections import Counter
 from datetime import date
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 from app.grading.grader import GradingError, grade
 from app.grading.models import DEFAULT_MODEL, GradeIn, GradeOut
 from app.grading.prompt import PROMPT_VERSION
@@ -29,6 +31,8 @@ def metrics(rows: list[tuple[float, GradeOut]]) -> dict:
         "n": n,
         "exact": sum(exact) / n if n else None,
         "in_range": sum(o.points_min <= e <= o.points_max for e, o in rows) / n if n else None,
+        "within_half": sum(abs(o.points - e) <= 0.5 for e, o in rows) / n if n else None,
+        "within_one": sum(abs(o.points - e) <= 1 for e, o in rows) / n if n else None,
         "mae": sum(abs(o.points - e) for e, o in rows) / n if n else None,
         "calibration": sum(certain) / len(certain) if certain else None,
     }
@@ -43,13 +47,15 @@ def main(argv=None) -> Path:
     ap.add_argument("cases", type=Path)
     ap.add_argument("--provider", default="anthropic", choices=list(KEY_ENV))
     ap.add_argument("--model")
+    ap.add_argument("--limit", type=int, help="grade only the first N cases")
     args = ap.parse_args(argv)
+    load_dotenv(Path(__file__).parents[2] / ".env")  # does not override vars already set
     key = os.environ.get(KEY_ENV[args.provider])
     if not key:
         sys.exit(f"Set {KEY_ENV[args.provider]} first.")
     model = args.model or DEFAULT_MODEL[args.provider]
 
-    cases = [json.loads(line) for line in args.cases.read_text().splitlines() if line.strip()]
+    cases = [json.loads(line) for line in args.cases.read_text().splitlines() if line.strip()][: args.limit]
     rows: dict[str, list[tuple[float, GradeOut]]] = {}
     failures: Counter[str] = Counter()
 
@@ -76,12 +82,14 @@ def main(argv=None) -> Path:
         f"- prompt version: {PROMPT_VERSION}",
         f"- cases: {len(cases)}",
         "",
-        "| basis | n | exact | in_range | mae | calibration |",
-        "|---|---|---|---|---|---|",
+        "| basis | n | exact | within_half | within_one | in_range | mae | calibration |",
+        "|---|---|---|---|---|---|---|---|",
     ]
     for basis, r in sorted(rows.items()):
         m = metrics(r)
-        lines.append(f"| {basis} | " + " | ".join(_fmt(m[k]) for k in ("n", "exact", "in_range", "mae", "calibration")) + " |")
+        lines.append(
+            f"| {basis} | " + " | ".join(_fmt(m[k]) for k in ("n", "exact", "within_half", "within_one", "in_range", "mae", "calibration")) + " |"
+        )
     lines += ["", "## Failures", ""]
     lines += [f"- {code}: {n}" for code, n in sorted(failures.items())] or ["none"]
 
