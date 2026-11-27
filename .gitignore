@@ -50,3 +50,6 @@ graphify-out/20*/
 graphify-out/.*
 graphify-out/graph.html
 /backend/evals/grading/private/
+
+# Patterns the public snapshot must never contain (read by scripts/publish-public.sh)
+/.publish-deny

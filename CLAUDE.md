@@ -6,7 +6,9 @@ Exam simulator: a FastAPI pipeline turns old exam PDFs into tasks/subtasks with 
 ## Where we are
 
 - Roadmap and phase status: `docs/roadmap.md`. Work one phase per session.
-- Latest handoff (done / not done / decisions): `docs/2026-11-26-phase-6a-stage1-handoff.md` (hosting stage 1, `docs/hosting.md`; VM go-live check open);
+- Latest handoff (done / not done / decisions): `docs/2026-11-26-grading-eval-handoff.md` (grading eval on real teacher-graded
+  exams, Haiku results; real data in git-ignored `backend/evals/grading/private/`);
+  earlier: `docs/2026-11-26-phase-6a-stage1-handoff.md` (hosting stage 1, `docs/hosting.md`; VM go-live check open);
   earlier: `docs/2026-11-25-phase-5b2-handoff.md` (Notion export, `docs/notion.md`; live manual check open);
   earlier: `docs/2026-11-23-phase-5b1-handoff.md` (Anki export, `docs/anki.md`);
   earlier: `docs/2026-11-24-slack-crops-handoff.md` (`/quiz` shows page crops, weakest-first picking, response_url ack);
@@ -14,6 +16,19 @@ Exam simulator: a FastAPI pipeline turns old exam PDFs into tasks/subtasks with 
   earlier: `docs/2026-11-20-phase-4b-review-handoff.md` (async/session rule, upload duplicate contract);
   Ask redesign decisions: `docs/2026-11-13-ask-redesign-grill-handoff.md`, no code yet; phase 4 as built: `docs/2026-11-05-rag-handoff.md`).
   Write a new handoff doc at the end of each phase.
+
+## Repos and publishing
+
+- `ersan-eke/exam-sim` (private, `origin`) is the working repo: the production VM clones it, issues and CI live here.
+  Its history holds material that must stay private, so it is pushed to `origin` only.
+- `ersan-eke/exams` (public, local clone `../exam-sim-public`) gets history-free snapshots of `main`, made only with
+  `scripts/publish-public.sh` (dry run, show the user the stat, then `--push "message"`) and only when the user asks.
+- The script's deny list `.publish-deny` (git-ignored) holds the private strings it guards against: the student's name,
+  email, real exam file stems, real points. Add a line whenever new private data appears. A failed check means
+  fixing the content; narrow a line only when it matches invented test data.
+- Real exam material (PDFs, scans, transcriptions, eval cases) stays in git-ignored folders (`samples/`,
+  `backend/evals/grading/private/`). Committed tests, docs and results use aliases (`exam-01`) and invented names.
+  A spec or plan that names real exam details stays uncommitted until it is scrubbed.
 
 ## Run
 

@@ -61,7 +61,7 @@ The pipeline is deterministic PDF analysis with no LLM, so uploads are free and 
 | `models.py` | `ExamStructure` with `Task`, `Subtask`, `Region`, `McRule`, `Issue` and similar. |
 
 - **Solutions.** A filename and content heuristic recognises solution sheets. They link to their exam, and a solution's MC key and text are matched to subtasks.
-- **Text-first rule.** Regions are marked visual only when the text can't carry them. This cut the visual share of regions from 59.5 % to 37.2 % and the average grading request from 1,018 to 829 tokens.
+- **Text-first rule.** Regions are marked visual only when the text can't carry them. This cut the visual share of regions from 59.5 % to 37.9 % and the average grading request from 1,018 to 836 tokens.
 - **Repair agent.** When the pipeline emits `Issue`s (points that don't add up, a missing label), the worker enqueues a repair job. Claude receives the page images and the structure and has four tools: `get_page_image`, `move_region`, `set_points` and `validate`. Its result replaces the original only if it passes `ExamStructure` validation and the points check.
 - **Guards.** A 15-PDF smoke test (`pipeline.smoke`, about 13 s) compares output against `pipeline_smoke.json` and runs from a hook after every pipeline edit. The full corpus run (`pipeline.cli ../samples`) gates merges. PDFs and crops are never committed.
 

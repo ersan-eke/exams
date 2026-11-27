@@ -58,7 +58,7 @@ The subject is already editable (`ExamRow.vue` input, `ExamSettingsView.vue`); o
 
 Fewer images per grading request: more point values read from the exam, sub/superscripts folded into text, a stricter
 "visual" rule, optional docling formulas as LaTeX (Apple Silicon), editable max points. Visual subtask regions
-59.5 % -> 37.2 %, missing points 2552 -> 2020, tokens per request 1018 -> 829. See `docs/2026-11-01-text-first-handoff.md`.
+59.5 % -> 37.9 %, missing points 2552 -> 2020, tokens per request 1018 -> 836. See `docs/2026-11-01-text-first-handoff.md`.
 
 ## Phase 2 — LLM grading + eval (3 days) — DONE
 
